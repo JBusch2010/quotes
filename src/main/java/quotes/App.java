@@ -4,13 +4,20 @@
 package quotes;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
 public class App {
+
+    public static void main (String[] args) {
+        apiStuff();
+    }
     //Get randomNumber to get the quote
     public int getRandomNumber(int MAX) {
         Random rand = new Random();
@@ -19,15 +26,15 @@ public class App {
     }
 
     //Function that returns the string version of quotes
-    public  String getStringVersion(Quotes[] quotesFromFile, int randomNumber) {
+    public String getStringVersion(ArrayList<Quotes> quotesFromFile, int randomNumber) {
         String printString = "";
-        printString = quotesFromFile[randomNumber].author + " " + quotesFromFile[randomNumber].text;
+        printString = quotesFromFile.get(randomNumber).author + " " + quotesFromFile.get(randomNumber).text;
 
         return printString;
     }
 
     //Function that gets all the Quotes when the path is passed
-    public Quotes[] getQuotes(String PATH) throws  FileNotFoundException{
+    public ArrayList<Quotes> getQuotes(String PATH) throws  FileNotFoundException{
         Gson gson = new Gson();
         Scanner reader = new Scanner(new File(PATH));
         String stringVersion = "";
@@ -37,8 +44,39 @@ public class App {
             stringVersion += quoteString;
         }
 
-        Quotes[] quotesFromFile = gson.fromJson(stringVersion, Quotes[].class);
+        ArrayList<Quotes> quotesFromFile = gson.fromJson(stringVersion, new TypeToken<ArrayList<Quotes>>(){}.getType());
         return quotesFromFile;
-
     }
+
+    //Pull .json file in with some kind of reader
+    //Use GSON to convert to an ArrayList.
+    //Get new Quote from API (likely an array of strings)
+    //Construct a new object using your Quotes.class with API quote
+    //.add with your new Quotes obj to your arraylist
+    //overwrite your old .json file with the new modified arraylist (gson).  Reference: unicorn demo.
+
+    public static void apiStuff () {
+
+        try {
+            // https://www.baeldung.com/java-http-request
+            URL url = new URL("http://ron-swanson-quotes.herokuapp.com/v2/quotes");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            System.out.println(connection.getResponseCode());
+
+            // synchronous: java is going to be working on running line 15 for a while
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+
+            System.out.println(content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

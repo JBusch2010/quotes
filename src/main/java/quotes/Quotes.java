@@ -17,6 +17,11 @@ public class Quotes {
         this.text = text;
     }
 
+    public RonQuote(String text){
+        this.text = text;
+
+    }
+
     public String toString() {
         return "Quotes{" +
                 "tags=" + tags +
