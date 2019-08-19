@@ -1,7 +1,7 @@
 # Manish KC and Joachen Busch
 - [Link to Code](https://github.com/jManij/quotes/blob/master/src/main/java/quotes/App.java)
 
-# Lab 08 Design
+# Lab 08-09 Design and Web Requests
  -Functionality and Tests
   - Can check if the length is greater than 0
   - Can check to see we do not get a null object
@@ -27,4 +27,6 @@ Testing from IJ:
 # Contributions
   - Jack Daniels
   - Trevor Dobson
+  - Brandon Hurrington
+  - Chris Coulon
   - https://stackoverflow.com/questions/9598707/gson-throwing-expected-begin-object-but-was-begin-array
