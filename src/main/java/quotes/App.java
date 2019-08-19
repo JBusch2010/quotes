@@ -5,57 +5,23 @@ package quotes;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
 
 public class App {
 
     public static void main (String[] args) {
-        apiStuff();
-    }
-    //Get randomNumber to get the quote
-    public int getRandomNumber(int MAX) {
-        Random rand = new Random();
-        int randIndex = rand.nextInt(MAX);
-        return randIndex;
+
+        String filePath = "src/main/resources/recentquotes.json";
+
+        apiCall(filePath);
     }
 
-    //Function that returns the string version of quotes
-    public String getStringVersion(ArrayList<Quotes> quotesFromFile, int randomNumber) {
-        String printString = "";
-        printString = quotesFromFile.get(randomNumber).author + " " + quotesFromFile.get(randomNumber).text;
-
-        return printString;
-    }
-
-    //Function that gets all the Quotes when the path is passed
-    public ArrayList<Quotes> getQuotes(String PATH) throws  FileNotFoundException{
+    public static void apiCall(String filePath) {
         Gson gson = new Gson();
-        Scanner reader = new Scanner(new File(PATH));
-        String stringVersion = "";
-
-        while (reader.hasNext()) {
-            String quoteString = reader.nextLine();
-            stringVersion += quoteString;
-        }
-
-        ArrayList<Quotes> quotesFromFile = gson.fromJson(stringVersion, new TypeToken<ArrayList<Quotes>>(){}.getType());
-        return quotesFromFile;
-    }
-
-    //Pull .json file in with some kind of reader
-    //Use GSON to convert to an ArrayList.
-    //Get new Quote from API (likely an array of strings)
-    //Construct a new object using your Quotes.class with API quote
-    //.add with your new Quotes obj to your arraylist
-    //overwrite your old .json file with the new modified arraylist (gson).  Reference: unicorn demo.
-
-    public static void apiStuff () {
 
         try {
             // https://www.baeldung.com/java-http-request
@@ -66,17 +32,75 @@ public class App {
 
             // synchronous: java is going to be working on running line 15 for a while
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String inputLine;
-            StringBuilder content = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
-                content.append(inputLine);
-            }
-            in.close();
 
-            System.out.println(content);
+            String[] quoteFromApi = gson.fromJson(in, String[].class);
+            Quotes ronQuote = new Quotes(quoteFromApi[0]);
+
+            try {
+                writeToFile(filePath, ronQuote);
+
+            }
+            catch (Exception error) {
+                System.err.println(error);
+            }
+
+            System.out.println(quoteFromApi[0]);
+            in.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public static void writeToFile(String filePath, Quotes quote) throws Exception {
+
+        // Gson library instantiated so that we can use its methods later
+        Gson gson = new Gson();
+
+        // Buffered reader Java object instantiated so that we can read the file at the given file path
+        BufferedReader file = new BufferedReader(new FileReader(filePath));
+
+        // Creating a token that is made of TypeToken/ArrayList/Quotes objects
+        TypeToken<ArrayList<Quotes>> token = new TypeToken<ArrayList<Quotes>>(){};
+
+        // Using Gson to read from the json file and the token method getType to provide the type of data
+        // and place into an Array List of Quotes objects
+        ArrayList<Quotes> quotesFromFile = gson.fromJson(file, token.getType());
+
+        // Add the individual quote that we pulled from the API and passed into the method to the Array List
+        quotesFromFile.add(quote);
+
+        // Buffered Writer then goes to the same file path and utilizes gson's method to write to json the new version of the file
+        // with the added quote
+        BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+        writer.write(gson.toJson(quotesFromFile));
+
+        // This will technically be garbage collected but we are going to add it for the sake of assurance
+        writer.close();
+        file.close();
+    }
+
+    // Get randomNumber to get the quote
+    public int getRandomNumber(int MAX) {
+        Random rand = new Random();
+        int randIndex = rand.nextInt(MAX);
+        return randIndex;
+    }
+
+    // Function that returns the string version of quotes
+    public String getStringVersion(ArrayList<Quotes> quotesFromFile, int randomNumber) {
+        String printString = "";
+        printString = quotesFromFile.get(randomNumber).author + " " + quotesFromFile.get(randomNumber).text;
+
+        return printString;
+    }
+
+
+    //Pull .json file in with some kind of reader
+    //Use GSON to convert to an ArrayList.
+    //Get new Quote from API (likely an array of strings)
+    //Construct a new object using your Quotes.class with API quote
+    //.add with your new Quotes obj to your arraylist
+    //overwrite your old .json file with the new modified arraylist (gson).  Reference: unicorn demo.
+
 
 }

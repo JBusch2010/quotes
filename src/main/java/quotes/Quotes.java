@@ -17,7 +17,7 @@ public class Quotes {
         this.text = text;
     }
 
-    public RonQuote(String text){
+    public Quotes(String text){
         this.text = text;
 
     }
