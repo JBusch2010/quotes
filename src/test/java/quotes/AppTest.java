@@ -10,42 +10,4 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
-public class AppTest {
 
-    App test = new App();
-    String PATH = "src/main/resources/recentquotes.json";
-
-    @Test public void getRandomQuotesTest() throws FileNotFoundException {
-        ArrayList<Quotes> allQuotes = test.getQuotes(PATH);
-        int rand = test.getRandomNumber(allQuotes.size());
-        int rand1 = test.getRandomNumber(allQuotes.size());
-        int rand2 = test.getRandomNumber(allQuotes.size());
-        int rand3 = test.getRandomNumber(allQuotes.size());
-        int rand4 = test.getRandomNumber(allQuotes.size());
-        int rand5 = test.getRandomNumber(allQuotes.size());
-        int rand6 = test.getRandomNumber(allQuotes.size());
-
-
-        assertTrue(test.getStringVersion(allQuotes, rand).length() > 0);
-        assertTrue(test.getStringVersion(allQuotes, rand).length() > 1);
-        assertNotNull(test.getStringVersion(allQuotes, rand));
-        assertNotNull(test.getStringVersion(allQuotes, rand));
-        assertTrue(test.getStringVersion(allQuotes,rand).equals(allQuotes.get(rand).author + " " + allQuotes.get(rand).text));
-        assertTrue(test.getStringVersion(allQuotes,rand1).equals(allQuotes.get(rand1).author + " " + allQuotes.get(rand1).text));
-        assertTrue(test.getStringVersion(allQuotes,rand2).equals(allQuotes.get(rand2).author + " " + allQuotes.get(rand2).text));
-        assertTrue(test.getStringVersion(allQuotes,rand3).equals(allQuotes.get(rand3).author + " " + allQuotes.get(rand3).text));
-        assertTrue(test.getStringVersion(allQuotes,rand4).equals(allQuotes.get(rand4).author + " " + allQuotes.get(rand4).text));
-        assertTrue(test.getStringVersion(allQuotes,rand5).equals(allQuotes.get(rand5).author + " " + allQuotes.get(rand5).text));
-        assertTrue(test.getStringVersion(allQuotes,rand6).equals(allQuotes.get(rand6).author + " " + allQuotes.get(rand6).text));
-
-
-    }
-
-    @Test public void apiStuff() {
-
-    }
-
-
-
-
-}
